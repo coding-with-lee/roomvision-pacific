@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomVision Web | Modern Furniture Pacific</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="max-w-4xl mx-auto p-4 md:p-6">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-red-900">Modern Furniture Pacific</h1>
+            <p class="text-gray-600 text-sm">RoomVision 3D & Instant Quotation Engine</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="bg-white p-4 rounded-xl shadow-md flex flex-col items-center">
+                <h2 class="font-semibold mb-2">3D Room Preview</h2>
+                
+                <model-viewer 
+                    id="furniture-viewer"
+                    src="https://modelviewer.dev/shared-assets/models/Chair.gltf" 
+                    ar 
+                    ar-modes="webxr scene-viewer quick-look" 
+                    camera-controls 
+                    shadow-intensity="1" 
+                    class="w-full h-72 rounded-lg border bg-gray-50">
+                    <button slot="ar-button" class="bg-red-900 text-white px-4 py-2 rounded-lg text-sm font-semibold absolute bottom-4 right-4 shadow-lg">
+                        📱 Place in Room (AR)
+                    </button>
+                </model-viewer>
+                
+                <p class="text-xs text-gray-500 mt-2 text-center">
+                    Tap "Place in Room" on Android/iOS to overlay furniture on your floor.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="font-semibold mb-4 text-lg">Specify Room & Customization</h2>
+                
+                <form id="quoteForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Furniture Piece</label>
+                        <select id="product_type" class="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                            <option value="mahogany_bed">Mahogany King Bed</option>
+                            <option value="l_sofa">L-Shaped Living Room Sofa</option>
+                            <option value="dining_table">6-Seater Mahogany Dining Set</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700">Length (ft)</label>
+                            <input type="number" id="length_ft" value="6.5" step="0.5" class="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700">Width (ft)</label>
+                            <input type="number" id="width_ft" value="6.0" step="0.5" class="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Mahogany Wood Finish</label>
+                        <select id="finish" class="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                            <option value="clear_varnish">Natural Clear Varnish</option>
+                            <option value="dark_mahogany">Dark Mahogany Stain</option>
+                            <option value="matt_black">Matt Black Polish</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Your Name</label>
+                        <input type="text" id="name" placeholder="John Doe" required class="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Phone Number (WhatsApp)</label>
+                        <input type="tel" id="phone" placeholder="0712345678" required class="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                    </div>
+
+                    <button type="submit" class="w-full bg-red-900 hover:bg-red-800 text-white font-bold py-2.5 rounded-md transition duration-200">
+                        Calculate Instant Quote
+                    </button>
+                </form>
+
+                <div id="resultBox" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                    <p class="text-xs text-green-700 font-medium">Estimated Price Quote:</p>
+                    <p id="quoteAmount" class="text-2xl font-extrabold text-green-900 mb-3"></p>
+                    <a id="whatsappBtn" href="#" target="_blank" class="block text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md text-sm">
+                        📲 Send Specs & Order via WhatsApp
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('quoteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const payload = {
+                product_type: document.getElementById('product_type').value,
+                length_ft: document.getElementById('length_ft').value,
+                width_ft: document.getElementById('width_ft').value,
+                finish: document.getElementById('finish').value,
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value
+            };
+
+            const response = await fetch('/api/calculate-quote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if(result.status === 'success') {
+                document.getElementById('quoteAmount').innerText = result.estimated_price;
+                document.getElementById('whatsappBtn').href = result.whatsapp_url;
+                document.getElementById('resultBox').classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>s

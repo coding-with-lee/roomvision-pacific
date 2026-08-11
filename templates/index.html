@@ -19,19 +19,8 @@
             
             <div class="bg-white p-4 rounded-xl shadow-md flex flex-col items-center">
                 <h2 class="font-semibold mb-2">3D Room Preview</h2>
-                
-                <model-viewer 
-                    id="furniture-viewer"
-                    src="https://modelviewer.dev/shared-assets/models/Chair.gltf" 
-                    ar 
-                    ar-modes="webxr scene-viewer quick-look" 
-                    camera-controls 
-                    shadow-intensity="1" 
-                    class="w-full h-72 rounded-lg border bg-gray-50">
-                    <button slot="ar-button" class="bg-red-900 text-white px-4 py-2 rounded-lg text-sm font-semibold absolute bottom-4 right-4 shadow-lg">
-                        📱 Place in Room (AR)
-                    </button>
-                </model-viewer>
+                <img id="furniturePreview" src="/static/images/sofa.jpg" alt="Furniture Preview" class="w-full h-72 object-cover rounded-lg border bg-gray-50 mb-2">
+             
                 
                 <p class="text-xs text-gray-500 mt-2 text-center">
                     Tap "Place in Room" on Android/iOS to overlay furniture on your floor.
@@ -45,9 +34,9 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Furniture Piece</label>
                         <select id="product_type" class="w-full mt-1 p-2 border border-gray-300 rounded-md">
-                            <option value="mahogany_bed">Mahogany King Bed</option>
-                            <option value="l_sofa">L-Shaped Living Room Sofa</option>
-                            <option value="dining_table">6-Seater Mahogany Dining Set</option>
+                        <option value="Mahogany King Bed">Mahogany King Bed</option>
+<option value="Sofa">L-Shaped Living Room Sofa</option>
+<option value="Dining Set">6-Seater Mahogany Dining Set</option>
                         </select>
                     </div>
 
@@ -98,6 +87,19 @@
     </div>
 
     <script>
+        const furnitureImages = {
+  'Sofa': '/static/images/sofa.jpg',
+  'Dining Set': '/static/images/dining-table.jpg',
+  'Mahogany King Bed': '/static/images/mahogany-bed.jpg'
+};
+
+document.getElementById('product_type').addEventListener('change', function() {
+  const selected = this.value;
+  const imgElement = document.getElementById('furniturePreview');
+  if (imgElement && furnitureImages[selected]) {
+    imgElement.src = furnitureImages[selected];
+  }
+});
         document.getElementById('quoteForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
